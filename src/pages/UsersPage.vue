@@ -1,9 +1,9 @@
 <template>
-  <q-page>
-    <div class="row items-center justify-between q-mb-lg">
+  <q-page class="q-pa-lg bg-grey-1">
+    <div class="row items-center justify-between q-mb-xl">
       <div>
-        <h1 class="text-h4 text-weight-bold text-grey-9 q-my-none">User Management</h1>
-        <p class="text-grey-6 q-mt-xs">Manage system users and their roles.</p>
+        <h1 class="text-h4 text-weight-bolder text-grey-9 q-my-none" style="letter-spacing: -1px;">User Management</h1>
+        <p class="text-grey-6 q-mt-sm text-subtitle1">Manage system access, roles, and user profiles efficiently.</p>
       </div>
       <div class="flex items-center q-gutter-sm">
         <q-input 
@@ -12,17 +12,27 @@
             v-model="filter" 
             placeholder="Search users..." 
             bg-color="white"
-            class="q-mr-sm"
+            class="q-mr-md shadow-1 rounded-borders"
+            style="min-width: 250px;"
         >
             <template v-slot:prepend>
-                <q-icon name="search" />
+                <q-icon name="search" class="text-grey-5" />
             </template>
         </q-input>
-        <q-btn unelevated color="primary" icon="add" label="Add User" no-caps @click="addUserDialog = true" />
+        <q-btn 
+            unelevated 
+            color="black" 
+            text-color="white"
+            icon="add" 
+            label="Add User" 
+            no-caps 
+            class="q-px-lg q-py-sm rounded-borders"
+            @click="addUserDialog = true" 
+        />
       </div>
     </div>
 
-    <q-card flat class="bg-white q-pa-none border-radius-lg overflow-hidden">
+    <q-card flat class="bg-white border-radius-lg shadow-2 overflow-hidden">
        <q-table
         flat
         :rows="users"
@@ -31,24 +41,41 @@
         :loading="loading"
         :pagination="initialPagination"
         :filter="filter"
+        table-header-class="text-grey-7 text-uppercase text-weight-bold bg-grey-1"
        >
+        <!-- Custom Avatar Slot -->
+        <template v-slot:body-cell-avatar="props">
+            <q-td :props="props" auto-width>
+                <q-avatar size="36px" class="bg-grey-3 text-grey-8 text-weight-bold cursor-pointer" @click="openEditDialog(props.row)">
+                    {{ props.row.full_name.charAt(0).toUpperCase() }}
+                </q-avatar>
+            </q-td>
+        </template>
+
+        <!-- Custom Name Slot -->
+        <template v-slot:body-cell-full_name="props">
+            <q-td :props="props">
+                <div class="text-weight-bold text-grey-9">{{ props.row.full_name }}</div>
+            </q-td>
+        </template>
+
         <!-- Custom Role Slot -->
         <template v-slot:body-cell-role="props">
           <q-td :props="props">
             <q-badge 
                 :color="getRoleColor(props.row.role)" 
-                class="text-weight-bold cursor-pointer q-px-sm q-py-xs"
-                @click="openEditDialog(props.row)"
+                text-color="white"
+                class="text-weight-bold q-px-sm q-py-xs shadow-1"
+                rounded
             >
                 {{ props.row.role }}
-                <q-icon name="edit" size="12px" class="q-ml-xs" />
             </q-badge>
           </q-td>
         </template>
         
         <!-- Custom Created At Slot -->
         <template v-slot:body-cell-created_at="props">
-          <q-td :props="props">
+          <q-td :props="props" class="text-grey-7">
             {{ new Date(props.row.created_at).toLocaleDateString() }}
           </q-td>
         </template>
@@ -212,19 +239,20 @@ const initialPagination = {
 }
 
 const columns = [
-  { name: 'full_name', align: 'left', label: 'Name', field: 'full_name', sortable: true },
-  { name: 'email', align: 'left', label: 'Email', field: 'email', sortable: true },
-  { name: 'role', align: 'left', label: 'Role', field: 'role', sortable: true },
-  { name: 'created_at', align: 'left', label: 'Joined', field: 'created_at', sortable: true },
-  { name: 'actions', align: 'right', label: 'Actions' }
+  { name: 'avatar', align: 'center', label: '', field: 'avatar', sortable: false },
+  { name: 'full_name', align: 'left', label: 'NAME', field: 'full_name', sortable: true },
+  { name: 'email', align: 'left', label: 'EMAIL', field: 'email', sortable: true },
+  { name: 'role', align: 'left', label: 'ROLE', field: 'role', sortable: true },
+  { name: 'created_at', align: 'left', label: 'JOINED DATE', field: 'created_at', sortable: true },
+  { name: 'actions', align: 'right', label: 'ACTIONS' }
 ]
 
 const getRoleColor = (role) => {
     switch(role) {
-        case 'admin': return 'purple';
-        case 'teacher': return 'blue';
-        case 'student': return 'green';
-        case 'staff': return 'orange';
+        case 'admin': return 'purple-7';
+        case 'teacher': return 'blue-7';
+        case 'student': return 'green-6';
+        case 'staff': return 'orange-7';
         default: return 'grey';
     }
 }

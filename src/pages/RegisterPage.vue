@@ -88,9 +88,11 @@
         </div>
       </q-form>
       
-      <div class="absolute-top-left q-pa-lg">
-          <q-btn flat icon="home" label="Home" color="white" to="/" no-caps />
-      </div>
+    </div>
+
+    <!-- Home Button -->
+    <div class="absolute-top-left q-pa-lg" style="z-index: 3;">
+        <q-btn flat icon="home" label="Home" color="white" to="/" no-caps />
     </div>
   </q-page>
 </template>
