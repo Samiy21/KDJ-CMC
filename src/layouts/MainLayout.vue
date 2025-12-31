@@ -1,22 +1,34 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+  <q-layout view="lHh Lpr lFf" class="bg-black text-white">
+    <q-header class="bg-black text-white q-py-sm" height-hint="98">
+      <q-toolbar class="container">
+        <!-- Logo -->
+        <q-toolbar-title shrink class="text-weight-bold row items-center no-wrap">
+          <q-icon name="school" size="28px" class="q-mr-sm" />
+          ClassMaster
+        </q-toolbar-title>
 
-        <q-toolbar-title> Quasar App </q-toolbar-title>
+        <!-- Centered Navigation -->
+        <q-space />
+        <div class="gt-sm row q-gutter-lg">
+          <q-btn flat no-caps label="Features" class="text-white" />
+          <q-btn flat no-caps label="Solutions" class="text-white" />
+          <q-btn flat no-caps label="Pricing" class="text-white" />
+          <q-btn flat no-caps label="About" class="text-white" />
+        </div>
+        <q-space />
 
-        <div>Quasar v{{ $q.version }}</div>
+        <!-- Right Side Actions -->
+        <div class="row q-gutter-sm items-center" v-if="!userStore.user">
+          <q-btn flat no-caps label="Log in" class="text-white" to="/login" />
+          <q-btn unelevated color="white" text-color="black" label="Get Started" no-caps class="text-weight-bold" to="/register" />
+        </div>
+        <div class="row q-gutter-sm items-center" v-else>
+           <q-btn flat no-caps label="Dashboard" class="text-white" to="/dashboard" />
+           <q-btn flat no-caps icon="logout" class="text-white" @click="handleLogout" />
+        </div>
       </q-toolbar>
     </q-header>
-
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-        <q-item-label header> Essential Links </q-item-label>
-
-        <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
-      </q-list>
-    </q-drawer>
 
     <q-page-container>
       <router-view />
@@ -25,57 +37,28 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
+import { useUserStore } from 'stores/user-store'
+import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
 
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev',
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework',
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev',
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev',
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev',
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev',
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev',
-  },
-]
+const userStore = useUserStore()
+const router = useRouter()
+const $q = useQuasar()
 
-const leftDrawerOpen = ref(false)
-
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value
+const handleLogout = async () => {
+    try {
+        await userStore.logout()
+        router.push('/')
+        $q.notify({ type: 'positive', message: 'Logged out successfully' })
+    } catch {
+        $q.notify({ type: 'negative', message: 'Error logging out' })
+    }
 }
 </script>
+
+<style scoped>
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+</style>
